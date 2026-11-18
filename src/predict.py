@@ -71,9 +71,23 @@ def predict(text: str, threshold: float = CLASSIFICATION_THRESHOLD) -> dict:
         label: "Real" or "Fake"
         confidence: probability of the predicted class, 0 to 1
         fake_probability: model output P(fake)
+        source_type: "Trusted News Source (Google News)" or "Neural Network Classifier"
     """
     if not isinstance(text, str) or not text.strip():
         raise ValueError("Please provide a non-empty news article.")
+
+    # Check if the text matches verified Google News feeds or trusted news publishers
+    from src.google_news import check_trusted_news
+
+    is_trusted, demo_confidence = check_trusted_news(text)
+    if is_trusted:
+        fake_prob = round(1.0 - demo_confidence, 4)
+        return {
+            "label": LABEL_NAMES[0],  # "Real"
+            "confidence": demo_confidence,
+            "fake_probability": fake_prob,
+            "source_type": "Trusted News Source (Google News)",
+        }
 
     from src.preprocess import clean_text
 
@@ -92,6 +106,7 @@ def predict(text: str, threshold: float = CLASSIFICATION_THRESHOLD) -> dict:
         "label": LABEL_NAMES[label_id],
         "confidence": confidence,
         "fake_probability": fake_probability,
+        "source_type": "Neural Network Classifier",
     }
 
 

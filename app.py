@@ -186,6 +186,8 @@ with tab2:
 
                 st.write(f"Model output P(Fake): **{fake_p:.4f}**")
                 st.progress(min(max(fake_p, 0.0), 1.0))
+                if result.get("source_type"):
+                    st.caption(f"Verification method: **{result['source_type']}**")
                 st.caption(
                     f"Decision boundary: P(Fake) ≥ {CLASSIFICATION_THRESHOLD:.2f} => Fake, "
                     f"else Real."
