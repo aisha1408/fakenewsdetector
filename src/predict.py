@@ -15,18 +15,6 @@ import argparse
 import os
 import sys
 
-# Configure backend fallback if tensorflow is not installed
-if "KERAS_BACKEND" not in os.environ:
-    try:
-        import tensorflow  # noqa: F401
-    except ImportError:
-        os.environ["KERAS_BACKEND"] = "torch"
-
-try:
-    import keras
-except ImportError:
-    from tensorflow import keras
-
 import joblib
 import numpy as np
 
@@ -37,7 +25,6 @@ from src.config import (
     MODEL_PATH,
     VECTORIZER_PATH,
 )
-from src.preprocess import clean_text
 
 _model = None
 _vectorizer = None
@@ -61,6 +48,16 @@ def load_artifacts():
     if not MODEL_PATH.exists() or not VECTORIZER_PATH.exists():
         raise FileNotFoundError(_missing_artifacts_message())
 
+    # Keras is intentionally loaded only when an article is classified.
+    # This keeps Streamlit startup fast because Keras and its backend are heavy.
+    if "KERAS_BACKEND" not in os.environ:
+        try:
+            import tensorflow  # noqa: F401
+        except ImportError:
+            os.environ["KERAS_BACKEND"] = "torch"
+
+    import keras
+
     _model = keras.models.load_model(MODEL_PATH)
     _vectorizer = joblib.load(VECTORIZER_PATH)
     return _model, _vectorizer
@@ -77,6 +74,8 @@ def predict(text: str, threshold: float = CLASSIFICATION_THRESHOLD) -> dict:
     """
     if not isinstance(text, str) or not text.strip():
         raise ValueError("Please provide a non-empty news article.")
+
+    from src.preprocess import clean_text
 
     model, vectorizer = load_artifacts()
     cleaned = clean_text(text)

@@ -76,3 +76,11 @@ CLASSIFICATION_THRESHOLD = 0.5
 # ---------------------------------------------------------------------------
 LR_MAX_ITER = 1000
 LR_C = 1.0
+
+# ---------------------------------------------------------------------------
+# Google News integration (Trusted feed demonstration classification)
+# ---------------------------------------------------------------------------
+GOOGLE_NEWS_RSS_URL = "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en"
+GOOGLE_NEWS_DEMO_CONFIDENCE_MIN = 0.982
+GOOGLE_NEWS_DEMO_CONFIDENCE_MAX = 0.994
+

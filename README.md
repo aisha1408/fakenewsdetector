@@ -59,7 +59,8 @@ fake-news-detector/
 │   ├── model.py                  # Keras Feedforward Neural Network architecture
 │   ├── train.py                  # End-to-end training and evaluation pipeline
 │   ├── evaluate.py               # Metrics, confusion matrix, and curve plotting
-│   └── predict.py                # Single article inference + CLI interface
+│   ├── predict.py                # Single article inference + CLI interface
+│   └── google_news.py            # Live Google News RSS feed integration
 │
 ├── app.py                        # Streamlit web demo
 ├── requirements.txt              # Project package dependencies
@@ -185,11 +186,10 @@ python -m streamlit run app.py
 *(Note: Use `python -m streamlit run app.py` if `streamlit` is not directly on your system PATH).*
 
 Features:
-- Text area to paste any news headline and body.
-- Quick test buttons to load sample real or fake news articles.
-- Instant classification with predicted label (`Real News` / `Fake News`).
-- Probability breakdown and visual confidence bars.
-- Built-in summary for viva questions.
+- **Live Google News Feed**: Dynamically fetches today's top headlines via Google News RSS, displaying the headline, publisher source, publication timestamp, original article link, and a green `TRUE` trusted-source demonstration badge with 98–99% confidence.
+- **Custom Article Detector**: Evaluates custom news articles/headlines using the original trained TF-IDF + Neural Network classifier.
+- **Quick Test Samples**: One-click sample loaders for instant testing of real vs. fake news.
+- **Visual Confidence Bars**: Interactive probability breakdown and decision boundary indicators.
 
 ---
 
