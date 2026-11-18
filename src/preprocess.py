@@ -52,6 +52,12 @@ def _lemmatizer() -> WordNetLemmatizer:
     return WordNetLemmatizer()
 
 
+@lru_cache(maxsize=50000)
+def _lemmatize_word(word: str) -> str:
+    """Cached lemmatizer so repeated words across news articles resolve in nanoseconds."""
+    return _lemmatizer().lemmatize(word)
+
+
 def clean_text(text: str) -> str:
     """Clean one article. Returns a string of lemmas separated by spaces."""
     if not isinstance(text, str) or not text.strip():
@@ -64,9 +70,15 @@ def clean_text(text: str) -> str:
     text = _WHITESPACE_RE.sub(" ", text).strip()
 
     stop = _stopwords()
-    lemma = _lemmatizer()
-    tokens = [lemma.lemmatize(token) for token in text.split() if token not in stop]
+    tokens = [_lemmatize_word(token) for token in text.split() if token not in stop]
     return " ".join(tokens)
+
+
+# Pre-warm lemmatizer on module load so WordNet's ~4s disk load occurs at startup, not during prediction
+try:
+    _lemmatize_word("warmup")
+except Exception:
+    pass
 
 
 def clean_corpus(texts) -> list[str]:

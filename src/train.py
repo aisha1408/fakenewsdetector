@@ -43,6 +43,7 @@ from src.config import (
     BATCH_SIZE,
     EARLY_STOPPING_PATIENCE,
     EPOCHS,
+    FAST_WEIGHTS_PATH,
     LABEL_FAKE,
     LABEL_REAL,
     LR_C,
@@ -168,8 +169,10 @@ def train() -> None:
     print("\n[6/8] Saving model and vectorizer...")
     model.save(MODEL_PATH)
     joblib.dump(vectorizer, VECTORIZER_PATH)
-    print(f"  Model:      {MODEL_PATH}")
-    print(f"  Vectorizer: {VECTORIZER_PATH}")
+    np.savez_compressed(FAST_WEIGHTS_PATH, *model.get_weights())
+    print(f"  Model:        {MODEL_PATH}")
+    print(f"  Fast weights: {FAST_WEIGHTS_PATH}")
+    print(f"  Vectorizer:   {VECTORIZER_PATH}")
 
     print("\n[7/8] Evaluating the neural network on the test set...")
     plot_training_curves(history)

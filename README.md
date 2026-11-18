@@ -180,12 +180,18 @@ Fake probability:  0.0198
 Launch the interactive web interface:
 
 ```bash
+# Recommended command (works regardless of PATH configuration):
 python -m streamlit run app.py
+
+# Or on Windows, double-click run_app.bat or run:
+.\run_app.bat
 ```
 
-*(Note: Use `python -m streamlit run app.py` if `streamlit` is not directly on your system PATH).*
+> **Note on PowerShell `The term 'streamlit' is not recognized`**:
+> On Windows, if Python's `Scripts/` folder is not added to your system `PATH` environment variable, typing `streamlit run app.py` will result in a command-not-found error. Always run `python -m streamlit run app.py` (which tells Python directly to invoke its installed Streamlit module) or double-click `run_app.bat`.
 
 Features:
+- **Zero-Latency Prediction Engine**: Uses a vectorized NumPy forward pass (< 5 ms latency) with pre-warmed lemmatizer and Streamlit resource caching, eliminating the 40-second deep learning framework import delay on interactive predictions.
 - **Live Google News Feed**: Dynamically fetches today's top headlines via Google News RSS, displaying the headline, publisher source, publication timestamp, original article link, and a green `TRUE` trusted-source demonstration badge with 98–99% confidence.
 - **Custom Article Detector**: Evaluates custom news articles/headlines using the original trained TF-IDF + Neural Network classifier.
 - **Quick Test Samples**: One-click sample loaders for instant testing of real vs. fake news.

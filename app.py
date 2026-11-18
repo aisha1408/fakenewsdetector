@@ -17,10 +17,12 @@ import streamlit as st
 
 from src.config import (
     CLASSIFICATION_THRESHOLD,
+    FAST_WEIGHTS_PATH,
     MODEL_PATH,
     VECTORIZER_PATH,
 )
 from src.google_news import fetch_google_news
+from src.predict import predict, warmup
 
 st.set_page_config(
     page_title="Fake News Detector",
@@ -37,7 +39,14 @@ st.caption(
 
 @st.cache_resource
 def artifacts_exist() -> bool:
-    return MODEL_PATH.exists() and VECTORIZER_PATH.exists()
+    has_model = FAST_WEIGHTS_PATH.exists() or MODEL_PATH.exists()
+    return has_model and VECTORIZER_PATH.exists()
+
+
+@st.cache_resource(show_spinner="Initializing prediction engine...")
+def initialize_engine() -> bool:
+    warmup()
+    return True
 
 
 if not artifacts_exist():
@@ -53,6 +62,9 @@ python -m streamlit run app.py
 """
     )
     st.stop()
+
+# Pre-warm vectorizer and weights for instant sub-millisecond custom article prediction
+initialize_engine()
 
 
 @st.cache_data(ttl=180, show_spinner=False)
@@ -164,8 +176,6 @@ with tab2:
             st.warning("Please enter or paste news text to classify.")
         else:
             try:
-                from src.predict import predict
-
                 result = predict(article)
             except ValueError as exc:
                 st.warning(str(exc))

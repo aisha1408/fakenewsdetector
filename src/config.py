@@ -24,6 +24,7 @@ FAKE_CSV = DATA_DIR / "Fake.csv"
 TRUE_CSV = DATA_DIR / "True.csv"
 
 MODEL_PATH = MODELS_DIR / "fake_news_nn.keras"
+FAST_WEIGHTS_PATH = MODELS_DIR / "fast_weights.npz"
 VECTORIZER_PATH = MODELS_DIR / "tfidf_vectorizer.joblib"
 METRICS_PATH = OUTPUTS_DIR / "metrics.json"
 CONFUSION_MATRIX_PATH = OUTPUTS_DIR / "confusion_matrix.png"
